@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lezzet Durağı Pastanesi - Menü</title>
+    <style>
+        /* Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap');
+
+        /* Animasyonlar */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse-star {
+            0% { transform: scale(1); text-shadow: 0 0 5px #ffd700; }
+            50% { transform: scale(1.3); text-shadow: 0 0 20px #ffac33; }
+            100% { transform: scale(1); text-shadow: 0 0 5px #ffd700; }
+        }
+
+        /* Temel Stiller */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; } /* Sayfa içi geçişleri yumuşatır */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            color: #333;
+            line-height: 1.6;
+        }
+        .menu-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Header (Başlık) Bölümü */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            color: #8B4513;
+            margin-bottom: 10px;
+        }
+        header p { font-size: 1.2rem; color: #666; font-style: italic; }
+
+        /* Kategori Filtre Butonları */
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease-out 0.2s backwards;
+        }
+        .filter-btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid transparent;
+            background-color: #fdf5e6;
+            color: #8B4513;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .filter-btn:hover {
+            background-color: #8B4513;
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(139, 69, 19, 0.3);
+        }
+        .filter-btn.active {
+            background-color: #8B4513;
+            color: #fff;
+            border-color: #D2B48C;
+        }
+        
+        /* YENİ BUTON DÜZENİ */
+        .filter-btn.full-width {
+            flex-basis: 100%;
+        }
+        .paired-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+        }
+
+        /* Menü Izgara (Grid) Yapısı */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        /* PC Menü Elemanı (Kart) Tasarımı */
+        .menu-item {
+            background-color: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: none;
+        }
+        .menu-item.show { display: block; animation: fadeInUp 0.5s ease-out; }
+        .menu-item:hover { transform: translateY(-10px); box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12); }
+        .menu-item img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .menu-item:hover img { transform: scale(1.05); }
+        .item-content { padding: 20px; }
+        .item-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #5a2d0c;
+        }
+        .star { display: inline-block; color: #ffd700; animation: pulse-star 1.5s infinite ease-in-out; }
+        .item-content .description { font-size: 0.95rem; color: #777; margin-bottom: 15px; min-height: 45px; }
+        .item-content .price { font-size: 1.4rem; font-weight: 600; color: #c0392b; text-align: right; }
+
+        /* Mobil Cihazlar için Ayarlamalar */
+        @media (max-width: 768px) {
+            .menu-container { margin: 15px; padding: 20px; }
+            header h1 { font-size: 2.5rem; }
+            .paired-buttons { grid-template-columns: 1fr 1fr; } /* Mobilde de 2'li kalmasını sağlar */
+            .menu-grid { grid-template-columns: 1fr; gap: 15px; }
+
+            /* YENİ MOBİL KART TASARIMI */
+            .menu-item {
+                display: flex;
+                flex-direction: row;
+                align-items: stretch; /* Kart yüksekliğini eşitler */
+                overflow: hidden; /* Resmin taşmasını engeller */
+            }
+            .menu-item:hover { transform: translateY(-5px); }
+            .menu-item img {
+                flex: 0 0 110px; /* Sabit resim genişliği */
+                height: auto; /* Yüksekliği otomatik ayarlar */
+                object-fit: cover;
+            }
+            .item-content {
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between; /* İçeriği dikeyde yayar */
+                flex: 1; /* Kalan tüm alanı kaplar */
+            }
+            .item-content h3 { font-size: 1.2rem; margin-bottom: 5px; }
+            .item-content .description {
+                font-size: 0.85rem;
+                min-height: auto;
+                margin-bottom: 10px;
+                line-height: 1.4;
+            }
+            .item-content .price {
+                font-size: 1.2rem;
+                text-align: right;
+                margin-top: auto; /* Fiyatı en alta iter */
+            }
+        }
+
+        /* --- YENİ EKLENEN BÖLÜMLER --- */
+
+        /* Footer Stilleri */
+        .site-footer {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: #8B4513; /* Ana kahverengi renk */
+            color: #fdf5e6; /* Açık krem renk */
+            margin-top: 40px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+        .site-footer .social-icons {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+        .site-footer .social-icons a {
+            color: #fdf5e6;
+            transition: transform 0.3s ease, color 0.3s ease;
+            display: inline-block;
+        }
+        .site-footer .social-icons a:hover {
+            color: #D2B48C; /* Vurgu rengi */
+            transform: scale(1.2);
+        }
+        .site-footer .social-icons svg {
+            width: 28px;
+            height: 28px;
+            fill: currentColor;
+        }
+        .site-footer .copyright {
+            font-size: 0.9rem;
+            color: #D2B48C;
+        }
+
+        /* Yukarı Çık Butonu */
+        #scrollTopBtn {
+            display: none; /* Başlangıçta gizli */
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            border: none;
+            outline: none;
+            background-color: #8B4513;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 50%; /* Daire şekli */
+            font-size: 18px; /* Ok ikonu boyutu */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: opacity 0.3s, transform 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        #scrollTopBtn.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        #scrollTopBtn:hover {
+            background-color: #5a2d0c; /* Koyu kahverengi */
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="menu-container">
+        <header>
+            <h1>Lezzet Durağı Pastanesi</h1>
+            <p>El yapımı lezzetler, taptaze mutluluklar...</p>
+        </header>
+
+        <nav class="filter-buttons">
+            <button class="filter-btn active full-width" data-filter="bestseller">⭐ En Çok Tercih Edilenler</button>
+            <div class="paired-buttons">
+                <button class="filter-btn" data-filter="all">Tüm Menü</button>
+                <button class="filter-btn" data-filter="pastalar">🍰 Pastalar</button>
+                <button class="filter-btn" data-filter="kurabiyeler">🍪 Kurabiyeler</button>
+                <button class="filter-btn" data-filter="sutlu-tatlilar">🍮 Sütlü Tatlılar</button>
+                <button class="filter-btn" data-filter="serbetli-tatlilar">🍯 Şerbetli Tatlılar</button>
+                <button class="filter-btn" data-filter="cheesecake">🧀 Cheesecakeler</button>
+                <button class="filter-btn" data-filter="kruvasan">🥐 Kruvasanlar</button>
+                <button class="filter-btn" data-filter="sicak-icecekler">☕ Sıcak İçecekler</button>
+                <button class="filter-btn" data-filter="soguk-icecekler">🍹 Soğuk İçecekler</button>
+            </div>
+        </nav>
+
+        <main class="menu-grid">
+            <!-- Ürünler buraya gelecek. HTML yapısı aynı kalıyor, sadece CSS ile görünüm değişiyor. -->
+            
+            <!-- Pastalar -->
+            <div class="menu-item" data-category="pastalar">
+                <img src="https://images.pexels.com/photos/1055272/pexels-photo-1055272.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Çikolatalı Pasta">
+                <div class="item-content">
+                    <div>
+                        <h3>Çikolatalı & Fıstıklı</h3>
+                        <p class="description">Yoğun Belçika çikolatası ve Antep fıstığı parçacıkları.</p>
+                    </div>
+                    <p class="price">200 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="pastalar">
+                <img src="https://images.pexels.com/photos/4109949/pexels-photo-4109949.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Frambuazlı Pasta">
+                <div class="item-content">
+                    <div>
+                        <h3>Frambuazlı Pasta</h3>
+                        <p class="description">Cheesecake lezzetinde, taze frambuazlı hafif pasta.</p>
+                    </div>
+                    <p class="price">190 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="pastalar">
+                <img src="https://images.pexels.com/photos/4110006/pexels-photo-4110006.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Orman Meyveli Pasta">
+                <div class="item-content">
+                    <div>
+                        <h3>Orman Meyveli Pasta</h3>
+                        <p class="description">Mevsimin en taze orman meyveleriyle süslenmiş.</p>
+                    </div>
+                    <p class="price">195 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="pastalar">
+                <img src="https://images.pexels.com/photos/1721932/pexels-photo-1721932.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Limonlu Mereng Pasta">
+                <div class="item-content">
+                    <div>
+                        <h3>Limonlu Mereng Pasta</h3>
+                        <p class="description">Ferahlatıcı limon kreması ve üzerinde yakılmış mereng.</p>
+                    </div>
+                    <p class="price">185 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="pastalar">
+                <img src="https://images.pexels.com/photos/461431/pexels-photo-461431.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Havuçlu Pasta">
+                <div class="item-content">
+                    <div>
+                        <h3>Havuçlu & Cevizli</h3>
+                        <p class="description">Tarçın kokulu, bol cevizli ve krem peynirli.</p>
+                    </div>
+                    <p class="price">180 TL</p>
+                </div>
+            </div>
+
+            <!-- Kurabiyeler -->
+            <div class="menu-item" data-category="kurabiyeler">
+                <img src="https://images.pexels.com/photos/2067425/pexels-photo-2067425.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Brownie">
+                <div class="item-content">
+                    <div>
+                        <h3>Brownie</h3>
+                        <p class="description">İçi ıslak, dışı çıtır, bol çikolatalı.</p>
+                    </div>
+                    <p class="price">130 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="kurabiyeler">
+                <img src="https://images.pexels.com/photos/7932338/pexels-photo-7932338.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Tahinli Kurabiye">
+                <div class="item-content">
+                    <div>
+                        <h3>Tahinli Kurabiye</h3>
+                        <p class="description">Ağızda dağılan, geleneksel lezzet.</p>
+                    </div>
+                    <p class="price">75 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="kurabiyeler">
+                <img src="https://images.pexels.com/photos/3802598/pexels-photo-3802598.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Yulaflı Cookie">
+                <div class="item-content">
+                    <div>
+                        <h3>Yulaflı Cookie</h3>
+                        <p class="description">Sağlıklı ve lezzetli bir ara öğün alternatifi.</p>
+                    </div>
+                    <p class="price">80 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="kurabiyeler">
+                <img src="https://images.pexels.com/photos/3051556/pexels-photo-3051556.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Macaron">
+                <div class="item-content">
+                    <div>
+                        <h3>Macaron (Adet)</h3>
+                        <p class="description">Rengarenk ve farklı dolgulu Fransız lezzeti.</p>
+                    </div>
+                    <p class="price">50 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="kurabiyeler">
+                <img src="https://images.pexels.com/photos/159883/pexels-photo-159883.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Elmalı Mini Turta">
+                <div class="item-content">
+                    <div>
+                        <h3>Elmalı Mini Turta</h3>
+                        <p class="description">Tarçınlı elma dolgulu, çıtır hamurlu.</p>
+                    </div>
+                    <p class="price">110 TL</p>
+                </div>
+            </div>
+
+            <!-- Sütlü Tatlılar -->
+            <div class="menu-item bestseller" data-category="sutlu-tatlilar">
+                <img src="https://images.pexels.com/photos/14083754/pexels-photo-14083754.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Trileçe">
+                <div class="item-content">
+                    <div>
+                        <h3>Trileçe <span class="star">⭐</span></h3>
+                        <p class="description">Üç farklı sütün muhteşem birleşimi, karamel sosuyla.</p>
+                    </div>
+                    <p class="price">180 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="sutlu-tatlilar">
+                <img src="https://images.pexels.com/photos/11995818/pexels-photo-11995818.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Fırın Sütlaç">
+                <div class="item-content">
+                    <div>
+                        <h3>Fırın Sütlaç</h3>
+                        <p class="description">Üzeri nar gibi kızarmış, anne usulü.</p>
+                    </div>
+                    <p class="price">140 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="sutlu-tatlilar">
+                <img src="https://images.pexels.com/photos/2105104/pexels-photo-2105104.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Profiterol">
+                <div class="item-content">
+                    <div>
+                        <h3>Profiterol</h3>
+                        <p class="description">Çikolata sosu altında taze krema dolgulu toplar.</p>
+                    </div>
+                    <p class="price">170 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="sutlu-tatlilar">
+                <img src="https://images.pexels.com/photos/827528/pexels-photo-827528.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Meyveli Magnolya">
+                <div class="item-content">
+                    <div>
+                        <h3>Meyveli Magnolya</h3>
+                        <p class="description">Muz, çilek ve bebe bisküvisiyle klasik lezzet.</p>
+                    </div>
+                    <p class="price">165 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="sutlu-tatlilar">
+                <img src="https://images.pexels.com/photos/7429958/pexels-photo-7429958.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Kazandibi">
+                <div class="item-content">
+                    <div>
+                        <h3>Kazandibi</h3>
+                        <p class="description">Hafif yanık aromasıyla geleneksel tat.</p>
+                    </div>
+                    <p class="price">135 TL</p>
+                </div>
+            </div>
+
+            <!-- Şerbetli Tatlılar -->
+            <div class="menu-item bestseller" data-category="serbetli-tatlilar">
+                <img src="https://images.pexels.com/photos/16834017/pexels-photo-16834017/free-photo-of-yiyecek-tatli-tabak-ceviz.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Fıstıklı Baklava">
+                <div class="item-content">
+                    <div>
+                        <h3>Fıstıklı Baklava <span class="star">⭐</span></h3>
+                        <p class="description">Çıtır yufkalar arasında bol Antep fıstığı.</p>
+                    </div>
+                    <p class="price">210 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="serbetli-tatlilar">
+                <img src="https://images.pexels.com/photos/11264287/pexels-photo-11264287.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Cevizli Ev Baklavası">
+                <div class="item-content">
+                    <div>
+                        <h3>Cevizli Ev Baklavası</h3>
+                        <p class="description">Ev yapımı tadında, bol cevizli.</p>
+                    </div>
+                    <p class="price">190 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="serbetli-tatlilar">
+                <img src="https://images.pexels.com/photos/10183377/pexels-photo-10183377.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Şekerpare">
+                <div class="item-content">
+                    <div>
+                        <h3>Şekerpare</h3>
+                        <p class="description">İrmikli hamuru ve kaymak eşliğinde.</p>
+                    </div>
+                    <p class="price">150 TL</p>
+                </div>
+            </div>
+             <div class="menu-item" data-category="serbetli-tatlilar">
+                <img src="https://images.pexels.com/photos/8745915/pexels-photo-8745915.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Revani">
+                <div class="item-content">
+                    <div>
+                        <h3>Revani</h3>
+                        <p class="description">Limonlu şerbetiyle ferahlatan bir klasik.</p>
+                    </div>
+                    <p class="price">145 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="serbetli-tatlilar">
+                <img src="https://images.pexels.com/photos/7429940/pexels-photo-7429940.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Kalburabastı">
+                <div class="item-content">
+                    <div>
+                        <h3>Kalburabastı</h3>
+                        <p class="description">Şekli ve şerbetiyle vazgeçilmez bir lezzet.</p>
+                    </div>
+                    <p class="price">155 TL</p>
+                </div>
+            </div>
+
+            <!-- Cheesecakeler -->
+            <div class="menu-item bestseller" data-category="cheesecake">
+                <img src="https://images.pexels.com/photos/4040589/pexels-photo-4040589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="San Sebastian Cheesecake">
+                <div class="item-content">
+                    <div>
+                        <h3>San Sebastian <span class="star">⭐</span></h3>
+                        <p class="description">Akışkan kreması ve yanık üst yüzeyiyle fenomen.</p>
+                    </div>
+                    <p class="price">195 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="cheesecake">
+                <img src="https://images.pexels.com/photos/264757/pexels-photo-264757.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Limonlu Cheesecake">
+                <div class="item-content">
+                    <div>
+                        <h3>Limonlu Cheesecake</h3>
+                        <p class="description">Ferahlatıcı, tatlı ve ekşi dengesi mükemmel.</p>
+                    </div>
+                    <p class="price">185 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="cheesecake">
+                <img src="https://images.pexels.com/photos/2067474/pexels-photo-2067474.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="New York Cheesecake">
+                <div class="item-content">
+                    <div>
+                        <h3>New York Cheesecake</h3>
+                        <p class="description">Yoğun peynir tadıyla klasikleşmiş lezzet.</p>
+                    </div>
+                    <p class="price">190 TL</p>
+                </div>
+            </div>
+             <div class="menu-item" data-category="cheesecake">
+                <img src="https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Tuzlu Karamelli Cheesecake">
+                <div class="item-content">
+                    <div>
+                        <h3>Tuzlu Karamelli</h3>
+                        <p class="description">Tatlı karamel ve deniz tuzunun eşsiz uyumu.</p>
+                    </div>
+                    <p class="price">195 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="cheesecake">
+                <img src="https://images.pexels.com/photos/2373520/pexels-photo-2373520.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Belçika Çikolatalı Cheesecake">
+                <div class="item-content">
+                    <div>
+                        <h3>Belçika Çikolatalı</h3>
+                        <p class="description">Çikolata severler için yoğun ve akışkan.</p>
+                    </div>
+                    <p class="price">200 TL</p>
+                </div>
+            </div>
+
+            <!-- Kruvasanlar -->
+            <div class="menu-item" data-category="kruvasan">
+                <img src="https://images.pexels.com/photos/1397020/pexels-photo-1397020.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Sade Kruvasan">
+                <div class="item-content">
+                    <div>
+                        <h3>Sade Kruvasan</h3>
+                        <p class="description">Tereyağlı, kat kat, çıtır çıtır Fransız klasiği.</p>
+                    </div>
+                    <p class="price">90 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="kruvasan">
+                <img src="https://images.pexels.com/photos/1854723/pexels-photo-1854723.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Çikolatalı Kruvasan">
+                <div class="item-content">
+                    <div>
+                        <h3>Çikolatalı Kruvasan</h3>
+                        <p class="description">İçinde akışkan Belçika çikolatası.</p>
+                    </div>
+                    <p class="price">105 TL</p>
+                </div>
+            </div>
+             <div class="menu-item" data-category="kruvasan">
+                <img src="https://images.pexels.com/photos/8325026/pexels-photo-8325026.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Bademli Kruvasan">
+                <div class="item-content">
+                    <div>
+                        <h3>Bademli Kruvasan</h3>
+                        <p class="description">Badem ezmesi dolgulu, üzeri file bademli.</p>
+                    </div>
+                    <p class="price">115 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="kruvasan">
+                <img src="https://images.pexels.com/photos/3892469/pexels-photo-3892469.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Üzümlü Danish">
+                <div class="item-content">
+                    <div>
+                        <h3>Üzümlü Danish</h3>
+                        <p class="description">Krema dolgulu ve kuru üzümlü.</p>
+                    </div>
+                    <p class="price">95 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="kruvasan">
+                <img src="https://images.pexels.com/photos/10494496/pexels-photo-10494496.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Peynirli Danish">
+                <div class="item-content">
+                    <div>
+                        <h3>Peynirli Danish</h3>
+                        <p class="description">Tuzlu sevenler için lor peynirli bir seçenek.</p>
+                    </div>
+                    <p class="price">100 TL</p>
+                </div>
+            </div>
+
+            <!-- Sıcak İçecekler -->
+            <div class="menu-item bestseller" data-category="sicak-icecekler">
+                <img src="https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Latte">
+                <div class="item-content">
+                    <div>
+                        <h3>Latte <span class="star">⭐</span></h3>
+                        <p class="description">Kadifemsi süt köpüğü ve kaliteli espresso.</p>
+                    </div>
+                    <p class="price">125 TL</p>
+                </div>
+            </div>
+             <div class="menu-item" data-category="sicak-icecekler">
+                <img src="https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Türk Kahvesi">
+                <div class="item-content">
+                    <div>
+                        <h3>Türk Kahvesi</h3>
+                        <p class="description">Bol köpüklü, geleneksel lezzet.</p>
+                    </div>
+                    <p class="price">90 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="sicak-icecekler">
+                <img src="https://images.pexels.com/photos/1579308/pexels-photo-1579308.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Filtre Kahve">
+                <div class="item-content">
+                    <div>
+                        <h3>Filtre Kahve</h3>
+                        <p class="description">Günlük demlenmiş, taze çekirdek kahve.</p>
+                    </div>
+                    <p class="price">110 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="sicak-icecekler">
+                <img src="https://images.pexels.com/photos/373639/pexels-photo-373639.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Cappuccino">
+                <div class="item-content">
+                    <div>
+                        <h3>Cappuccino</h3>
+                        <p class="description">Espresso, sıcak süt ve süt köpüğünün dengesi.</p>
+                    </div>
+                    <p class="price">125 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="sicak-icecekler">
+                <img src="https://images.pexels.com/photos/1337753/pexels-photo-1337753.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Sıcak Çikolata">
+                <div class="item-content">
+                    <div>
+                        <h3>Sıcak Çikolata</h3>
+                        <p class="description">Yoğun çikolata ve krema ile kış aylarının vazgeçilmezi.</p>
+                    </div>
+                    <p class="price">130 TL</p>
+                </div>
+            </div>
+
+            <!-- Soğuk İçecekler -->
+             <div class="menu-item bestseller" data-category="soguk-icecekler">
+                <img src="https://images.pexels.com/photos/109275/pexels-photo-109275.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Ev Yapımı Limonata">
+                <div class="item-content">
+                    <div>
+                        <h3>Ev Yapımı Limonata <span class="star">⭐</span></h3>
+                        <p class="description">Taze limon ve nane ile hazırlanmış ferahlatıcı lezzet.</p>
+                    </div>
+                    <p class="price">110 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="soguk-icecekler">
+                <img src="https://images.pexels.com/photos/1304542/pexels-photo-1304542.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Soğuk Kahve">
+                <div class="item-content">
+                    <div>
+                        <h3>Soğuk Kahve (Ice Coffee)</h3>
+                        <p class="description">Sıcak günlerde serinleten buz gibi kahve keyfi.</p>
+                    </div>
+                    <p class="price">130 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="soguk-icecekler">
+                <img src="https://images.pexels.com/photos/338713/pexels-photo-338713.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Taze Portakal Suyu">
+                <div class="item-content">
+                    <div>
+                        <h3>Taze Portakal Suyu</h3>
+                        <p class="description">Günlük sıkılmış, C vitamini deposu.</p>
+                    </div>
+                    <p class="price">120 TL</p>
+                </div>
+            </div>
+             <div class="menu-item" data-category="soguk-icecekler">
+                <img src="https://images.pexels.com/photos/34768/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Milkshake">
+                <div class="item-content">
+                    <div>
+                        <h3>Milkshake (Çilek/Çiko)</h3>
+                        <p class="description">Yoğun kıvamlı, dondurmalı ve lezzetli.</p>
+                    </div>
+                    <p class="price">150 TL</p>
+                </div>
+            </div>
+            <div class="menu-item" data-category="soguk-icecekler">
+                <img src="https://images.pexels.com/photos/1247926/pexels-photo-1247926.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Soğuk Çay">
+                <div class="item-content">
+                    <div>
+                        <h3>Soğuk Çay (Şeftali/Limon)</h3>
+                        <p class="description">Klasik Ice Tea lezzeti.</p>
+                    </div>
+                    <p class="price">95 TL</p>
+                </div>
+            </div>
+        </main>
+        
+        <!-- YENİ EKLENEN FOOTER -->
+        <footer class="site-footer">
+            <div class="social-icons">
+                <a href="#" target="_blank" aria-label="Facebook Sayfamız">
+                    <svg viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v7.032C18.343 21.128 22 16.991 22 12z"></path></svg>
+                </a>
+                <a href="#" target="_blank" aria-label="Instagram Sayfamız">
+                    <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.668-.014 4.948-.072c4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>
+                </a>
+                <a href="#" target="_blank" aria-label="Twitter Sayfamız">
+                    <svg viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.223.085 4.93 4.93 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"></path></svg>
+                </a>
+            </div>
+            <p class="copyright">© 2024 Lezzet Durağı Pastanesi. Tüm Hakları Saklıdır.</p>
+        </footer>
+    </div>
+
+    <!-- YENİ EKLENEN YUKARI ÇIK BUTONU -->
+    <button id="scrollTopBtn" title="Yukarı Çık">▲</button>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Menü Filtreleme Kodları (Orijinal) ---
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const menuItems = document.querySelectorAll('.menu-item');
+
+            function filterMenu(filter) {
+                menuItems.forEach(item => {
+                    const itemCategory = item.dataset.category;
+                    const isBestseller = item.classList.contains('bestseller');
+                    
+                    item.style.display = 'none'; // Animasyon için önce gizle
+                    item.classList.remove('show');
+
+                    let shouldShow = false;
+                    if (filter === 'all' || itemCategory === filter) {
+                        shouldShow = true;
+                    } else if (filter === 'bestseller' && isBestseller) {
+                        shouldShow = true;
+                    }
+
+                    if (shouldShow) {
+                        // 'display' stili CSS'den değil, JS ile anlık olarak yönetiliyor.
+                        // Bu, mobil ve masaüstü arasındaki 'display: flex' vs 'display: block' geçişini korur.
+                        item.style.display = ''; 
+                        item.classList.add('show');
+                    }
+                });
+            }
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    const filter = this.dataset.filter;
+                    filterMenu(filter);
+                });
+            });
+
+            // Başlangıçta "En Çok Tercih Edilenler" gösterilsin
+            filterMenu('bestseller');
+
+            // --- YENİ EKLENEN YUKARI ÇIK BUTONU KODLARI ---
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+            // Kullanıcı sayfayı aşağı kaydırdığında butonu göster/gizle
+            window.onscroll = function() {
+                scrollFunction();
+            };
+
+            function scrollFunction() {
+                // Sayfanın üstünden 300px aşağı kaydırıldığında butonu göster
+                if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                    scrollTopBtn.classList.add('show');
+                } else {
+                    scrollTopBtn.classList.remove('show');
+                }
+            }
+
+            // Butona tıklandığında sayfanın en üstüne yumuşak bir şekilde git
+            scrollTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
